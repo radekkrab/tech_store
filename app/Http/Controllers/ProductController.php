@@ -14,7 +14,32 @@ class ProductController extends Controller
 {
     public function index(Request $request): ProductCollection
     {
-        $products = Product::all();
+        $query = Product::with(['category', 'tags'])
+            ->where('is_active', true)
+            ->latest();
+
+        if ($request->has('category')) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('slug', $request->category)
+                    ->orWhere('id', $request->category);
+            });
+        }
+
+        if ($request->has('tag')) {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->where('slug', $request->tag)
+                    ->orWhere('id', $request->tag);
+            });
+        }
+
+        if ($request->has('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $products = $query->paginate(12);
 
         return new ProductCollection($products);
     }
@@ -28,6 +53,12 @@ class ProductController extends Controller
 
     public function show(Request $request, Product $product): ProductResource
     {
+        if (!$product->is_active) {
+            abort(404);
+        }
+
+        $product->load(['category', 'tags']);
+
         return new ProductResource($product);
     }
 

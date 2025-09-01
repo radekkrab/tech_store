@@ -19,10 +19,10 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'file_path' => $this->file_path,
             'is_active' => $this->is_active,
-            'category_id' => $this->category_id,
-            'category' => CategoryResource::make($this->whenLoaded('category')),
-            'tags' => TagCollection::make($this->whenLoaded('tags')),
-            'orderProducts' => OrderProductCollection::make($this->whenLoaded('orderProducts')),
+            'category' => new CategoryResource($this->whenLoaded('category')),
+            'tags' => TagResource::collection($this->whenLoaded('tags')),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
