@@ -183,9 +183,9 @@ const fetchProducts = async () => {
     loading.value = true
     try {
         const params = new URLSearchParams()
-        if (filters.value.search) params.append('search', filters.value.search)
-        if (filters.value.category) params.append('category', filters.value.category)
-        if (filters.value.tag) params.append('tag', filters.value.tag)
+        if (filters.value.search) params.append('filter[search]', filters.value.search)
+        if (filters.value.category) params.append('filter[category]', filters.value.category)
+        if (filters.value.tag) params.append('filter[tags]', filters.value.tag)
 
         const response = await fetch(`/api/products?${params}`)
         const data = await response.json()

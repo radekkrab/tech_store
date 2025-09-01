@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filters\ProductFilter;
 use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\ProductCollection;
@@ -14,32 +15,7 @@ class ProductController extends Controller
 {
     public function index(Request $request): ProductCollection
     {
-        $query = Product::with(['category', 'tags'])
-            ->where('is_active', true)
-            ->latest();
-
-        if ($request->has('category')) {
-            $query->whereHas('category', function ($q) use ($request) {
-                $q->where('slug', $request->category)
-                    ->orWhere('id', $request->category);
-            });
-        }
-
-        if ($request->has('tag')) {
-            $query->whereHas('tags', function ($q) use ($request) {
-                $q->where('slug', $request->tag)
-                    ->orWhere('id', $request->tag);
-            });
-        }
-
-        if ($request->has('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('description', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        $products = $query->paginate(12);
+        $products = ProductFilter::apply();
 
         return new ProductCollection($products);
     }
