@@ -1,0 +1,76 @@
+models:
+  Product:
+    name: string
+    description: string
+    price: float
+    file_path: string
+    is_active: boolean
+    relationships:
+      belongsTo: Category
+      belongsToMany: Tag
+      hasMany: OrderProduct
+  Category:
+    name: string
+    description: string
+    is_active: boolean
+  Order:
+    status: enum:pending,paid,filed
+    total_amount: float
+    payment_method: enum:yookassa,coins
+    payment_id: string
+    relationships:
+      belongsTo: User
+      hasMany: OrderProduct
+  OrderProduct:
+    order_id: id
+    product_id: id
+    price_at_purchase: float
+    quantity: integer
+    relationships:
+      belongsTo: Order, Product
+  Download:
+    ip_address: string
+    user_agent: string
+    download_token: string
+    expires_at: datetime
+    relationships:
+      belongsTo: Order, Product, User
+  Tag:
+    name: string
+    relationships:
+      belongsToMany: Product
+  Cart:
+    session_id: string
+    relationships:
+      belongsTo: User
+      hasMany: CartItem
+  CartItem:
+    quantity: integer
+    relationships:
+      belongsTo: Product
+  Balance:
+    amount: float default:0
+    currency: string
+    relationships:
+      belongsTo: User, Transaction
+  Transaction:
+    type: enum:deposit,withdraw,purchase,refund
+    status: enum:pending,completed,failed
+    amount: float
+    description: string
+    relationships:
+      belongsTo: User, Order, Product, Balance
+
+controllers:
+  ProductController:
+    resource: api
+  CategoryController:
+    resource: api
+  OrderController:
+    resource: api
+  TagController:
+    resource: api
+  BalanceController:
+    resource: api
+
+

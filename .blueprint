@@ -1,0 +1,55 @@
+created:
+    - app/Http/Controllers/ProductController.php
+    - app/Http/Controllers/CategoryController.php
+    - app/Http/Controllers/OrderController.php
+    - app/Http/Controllers/TagController.php
+    - app/Http/Controllers/BalanceController.php
+    - database/factories/ProductFactory.php
+    - database/factories/CategoryFactory.php
+    - database/factories/OrderFactory.php
+    - database/factories/OrderProductFactory.php
+    - database/factories/DownloadFactory.php
+    - database/factories/TagFactory.php
+    - database/factories/CartFactory.php
+    - database/factories/CartItemFactory.php
+    - database/factories/BalanceFactory.php
+    - database/factories/TransactionFactory.php
+    - database/migrations/2025_08_29_045738_create_products_table.php
+    - database/migrations/2025_08_29_045739_create_categories_table.php
+    - database/migrations/2025_08_29_045740_create_orders_table.php
+    - database/migrations/2025_08_29_045741_create_order_products_table.php
+    - database/migrations/2025_08_29_045742_create_downloads_table.php
+    - database/migrations/2025_08_29_045743_create_tags_table.php
+    - database/migrations/2025_08_29_045744_create_carts_table.php
+    - database/migrations/2025_08_29_045745_create_cart_items_table.php
+    - database/migrations/2025_08_29_045746_create_balances_table.php
+    - database/migrations/2025_08_29_045747_create_transactions_table.php
+    - database/migrations/2025_08_29_045748_create_product_tag_table.php
+    - app/Models/Product.php
+    - app/Models/Category.php
+    - app/Models/Order.php
+    - app/Models/OrderProduct.php
+    - app/Models/Download.php
+    - app/Models/Tag.php
+    - app/Models/Cart.php
+    - app/Models/CartItem.php
+    - app/Models/Balance.php
+    - app/Models/Transaction.php
+    - tests/Feature/Http/Controllers/ProductControllerTest.php
+    - tests/Feature/Http/Controllers/CategoryControllerTest.php
+    - tests/Feature/Http/Controllers/OrderControllerTest.php
+    - tests/Feature/Http/Controllers/TagControllerTest.php
+    - tests/Feature/Http/Controllers/BalanceControllerTest.php
+updated:
+    - routes/api.php
+models:
+    Product: { name: string, description: string, price: float, file_path: string, is_active: boolean, relationships: { belongsTo: Category, belongsToMany: Tag, hasMany: OrderProduct } }
+    Category: { name: string, description: string, is_active: boolean }
+    Order: { status: 'enum:pending,paid,filed', total_amount: float, payment_method: 'enum:yookassa,coins', payment_id: string, relationships: { belongsTo: User, hasMany: OrderProduct } }
+    OrderProduct: { order_id: id, product_id: id, price_at_purchase: float, quantity: integer, relationships: { belongsTo: 'Order, Product' } }
+    Download: { ip_address: string, user_agent: string, download_token: string, expires_at: datetime, relationships: { belongsTo: 'Order, Product, User' } }
+    Tag: { name: string, relationships: { belongsToMany: Product } }
+    Cart: { session_id: string, relationships: { belongsTo: User, hasMany: CartItem } }
+    CartItem: { quantity: integer, relationships: { belongsTo: Product } }
+    Balance: { amount: 'float default:0', currency: string, relationships: { belongsTo: 'User, Transaction' } }
+    Transaction: { type: 'enum:deposit,withdraw,purchase,refund', status: 'enum:pending,completed,failed', amount: float, description: string, relationships: { belongsTo: 'User, Order, Product, Balance' } }
