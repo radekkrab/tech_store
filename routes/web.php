@@ -26,8 +26,10 @@ Route::get('/products/{product}', function (Product $product) {
         abort(404);
     }
 
+    $productId = $product->getAttributeValue('id');
+
     return Inertia::render('Products/Show', [
-        'productId' => $product->id
+        'productId' => $productId
     ]);
 })->name('products.show');
 

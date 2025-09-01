@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-screen bg-gray-50">
-        <Head :title="product?.name || 'Загрузка...'" />
+        <Head :title="product?.data.name || 'Загрузка...'" />
 
         <!-- Хедер -->
         <div class="bg-white shadow-sm">
@@ -8,10 +8,12 @@
                 <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-4">
                     <Link :href="route('products.index')" class="hover:text-gray-700">Каталог</Link>
                     <span>/</span>
-                    <span class="text-gray-900">{{ product?.name || 'Загрузка...' }}</span>
+                    <span v-if="product?.data.category" class="text-gray-900">{{ product.data.category.name }}</span>
+                    <span v-if="product?.data.category">/</span>
+                    <span class="text-gray-900">{{ product?.data.name || 'Загрузка...' }}</span>
                 </nav>
 
-                <h1 class="text-3xl font-bold text-gray-900">{{ product?.name || 'Загрузка...' }}</h1>
+                <h1 class="text-3xl font-bold text-gray-900">{{ product?.data.name || 'Загрузка...' }}</h1>
             </div>
         </div>
 
@@ -38,11 +40,11 @@
                 <div>
                     <!-- Категория и теги -->
                     <div class="flex flex-wrap items-center gap-2 mb-4">
-            <span class="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
-              {{ product.category.name }}
+            <span v-if="product.data.category" class="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
+              {{ product.data.category.name }}
             </span>
                         <span
-                            v-for="tag in product.tags"
+                            v-for="tag in product.data.tags"
                             :key="tag.id"
                             class="bg-gray-100 text-gray-700 text-sm px-2 py-1 rounded"
                         >
@@ -52,14 +54,33 @@
 
                     <!-- Описание -->
                     <div class="prose prose-lg mb-6">
-                        <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
+                        <p class="text-gray-600 leading-relaxed">{{ product.data.description }}</p>
+                    </div>
+
+                    <!-- Детали -->
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Детали товара</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-gray-600">
+                                <span>Формат:</span>
+                                <span class="font-medium">PDF</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>Размер файла:</span>
+                                <span class="font-medium">~5-10 MB</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>Доставка:</span>
+                                <span class="font-medium">Мгновенная</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Цена и кнопка покупки -->
                     <div class="bg-white rounded-lg shadow p-6">
                         <div class="text-center mb-6">
               <span class="text-4xl font-bold text-green-600">
-                {{ formatPrice(product.price) }}
+                {{ formatPrice(product.data.price) }}
               </span>
                         </div>
 
@@ -69,11 +90,18 @@
                         >
                             Добавить в корзину
                         </button>
+
+                        <div class="text-center text-sm text-gray-500">
+                            <p>✅ Мгновенная доставка после оплаты</p>
+                            <p>✅ Безопасная оплата</p>
+                            <p>✅ Техническая поддержка</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Правая колонка - Placeholder -->
+                <!-- Правая колонка - Изображение -->
                 <div>
+                    <!-- Placeholder для PDF -->
                     <div class="bg-white rounded-lg shadow p-8 text-center">
                         <div class="text-6xl mb-4">📄</div>
                         <p class="text-gray-600">PDF файл</p>
@@ -100,6 +128,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
+import { route } from 'ziggy-js';
 
 const props = defineProps({
     productId: Number
@@ -136,7 +165,10 @@ const formatPrice = (price) => {
 }
 
 const addToCart = () => {
-    console.log('Add to cart:', product.value.id)
+    if (product.value) {
+        console.log('Add to cart:', product.value.id)
+        // Логика добавления в корзину
+    }
 }
 
 onMounted(fetchProduct)
